@@ -6,6 +6,10 @@ use Exception;
 use Redis;
 use WorkTestMax\Interfaces\ICache;
 
+/**
+ * Class CacheRedis
+ * @package WorkTestMax\Systems
+ */
 class CacheRedis implements ICache
 {
     /**

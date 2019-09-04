@@ -8,10 +8,6 @@ use WorkTestMax\Systems\CacheRedis;
 use WorkTestMax\Systems\CacheMemcached;
 
 /**
- * Система кэширования.
- */
-
-/**
  * Class Cache
  * @package WorkTestMax
  */
@@ -59,6 +55,9 @@ class Cache
                 case 'file':
                     self::$engine = new CacheFile();
                     break;
+                default:
+                    throw new Exception('This engine is not supported.');
+                    break;
             }
             self::$initialized = true;
         }
@@ -80,9 +79,7 @@ class Cache
         }
     }
 
-
     /**
-     * Метод возвращает абсолютный путь к файлу с закэшированными данными для файлового хранилища.
      *
      * @param string $cache_id
      * @param string $sub_dir
@@ -120,7 +117,6 @@ class Cache
 
 
     /**
-     * Метод проверяет существование ключа в указанной директории.
      *
      * @param string $cache_id
      * @param string $sub_dir
@@ -136,7 +132,6 @@ class Cache
 
 
     /**
-     * Метод возвращает закэшированные данные по указанному ключу и указанной директории.
      *
      * @param string $cache_id
      * @param string $sub_dir
@@ -156,7 +151,6 @@ class Cache
     }
 
     /**
-     * Метод для удаления кэшированных данных по указанному ключу.
      *
      * @param string $cache_id
      * @param string $sub_dir
@@ -171,7 +165,6 @@ class Cache
     }
 
     /**
-     * Метод возвращает отладочную информацию.
      *
      * @return array
      */
@@ -181,7 +174,3 @@ class Cache
     }
 
 }
-
-//Cache::init('redis');
-
-

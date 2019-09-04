@@ -2,6 +2,10 @@
 
 namespace WorkTestMax\Interfaces;
 
+/**
+ * Interface ICache
+ * @package WorkTestMax\Interfaces
+ */
 interface ICache
 {
     /**
@@ -22,17 +26,15 @@ interface ICache
     public function exists($cache_id, $prefix = 'cache');
 
     /**
-     * Особенность работы: Если кэшируется булево значение, которое равно false, тогда функция всегда будет возвращать false.
      *
      * @param $cache_id
      * @param string $prefix
      *
-     * @return false - вышел срок или нет такого ключа.
+     * @return false
      */
     public function get($cache_id, $prefix = 'cache');
 
     /**
-     * кэшировать относительно текущего timestamp.
      *
      * @param $cache_id
      * @param null $data

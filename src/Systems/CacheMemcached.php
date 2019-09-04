@@ -6,6 +6,10 @@ use Exception;
 use Memcached;
 use WorkTestMax\Interfaces\ICache;
 
+/**
+ * Class CacheMemcached
+ * @package WorkTestMax\Systems
+ */
 class CacheMemcached implements ICache
 {
     /**

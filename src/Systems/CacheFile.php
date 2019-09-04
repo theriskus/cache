@@ -45,7 +45,6 @@ class CacheFile implements ICache
             $file = $real_path;
         }
         return $file;
-
     }
 
     /**
@@ -95,7 +94,7 @@ class CacheFile implements ICache
     public function set($cache_id, $data = '', $ttl = 3600, $sub_dir = null)
     {
         $expiry = time() + $ttl;
-        $content = '<?phpexit;?>' . PHP_EOL;
+        $content = '<?php exit; ?>' . PHP_EOL;
         $content .= $cache_id . PHP_EOL;
         $content .= $expiry . PHP_EOL;
         $content .= addcslashes(serialize($data), "\x00..\x1F\x7F\x22\x27\x5C");
