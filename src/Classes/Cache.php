@@ -105,6 +105,9 @@ class Cache
      */
     static public function set($cache_id, $data, $ttl = 3600, $sub_dir = 'cache')
     {
+        if(!is_integer($ttl)) {
+            throw new Exception('ttl must be integer');
+        }
         self::check_initialization();
         if (self::$debug_mode == true) {
             if (array_key_exists($cache_id, self::$debug_data['recorded_keys']) == false) {
