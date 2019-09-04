@@ -3,34 +3,34 @@
 namespace WorkTestMax\Systems;
 
 use Exception;
-use Redis;
+use Memcached;
 use WorkTestMax\Interfaces\ICache;
 
-class CacheRedis implements ICache
+class CacheMemcached implements ICache
 {
     /**
      * @var bool
      */
     public static $enabled = false;
     /**
-     * @var Redis|null
+     * @var Memcached|null
      */
-    public static $redisInstance = null;
+    public static $memcachedInstance = null;
 
     /**
-     * CacheRedis constructor.
+     * CacheMemcached constructor.
      * @throws Exception
      */
     function __construct()
     {
-        if (self::$redisInstance == null) {
-            self::$redisInstance = new Redis();
+        if (self::$memcachedInstance == null) {
+            self::$memcachedInstance = new Memcached;
             try {
-                self::$redisInstance->pconnect('/var/run/redis/redis.sock'); // unix domain socket.
-                self::$redisInstance->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_NONE);
+                self::$memcachedInstance->addServer('localhost',11121);
+                self::$memcachedInstance->setOption(Memcached::OPT_SERIALIZER,0);
                 self::$enabled = true;
             } catch (Exception $e) {
-                throw new Exception('Redis is not connected.');
+                throw new Exception('Memcached is not connected.');
             }
         }
     }
@@ -57,7 +57,8 @@ class CacheRedis implements ICache
         $patterns_replacers = ['', ':'];
         $cache_id = preg_replace($path_patterns, $patterns_replacers, $cache_id);
         $prefix = preg_replace($path_patterns, $patterns_replacers, $prefix);
-        return boolval(self::$redisInstance->exists($prefix . ':' . $cache_id));
+        self::$memcachedInstance->get($prefix . ':' . $cache_id);
+        return Memcached::RES_NOTFOUND !== self::$memcachedInstance->getResultCode();
     }
 
     /**
@@ -71,7 +72,7 @@ class CacheRedis implements ICache
         $patterns_replacers = ['', ':'];
         $cache_id = preg_replace($path_patterns, $patterns_replacers, $cache_id);
         $prefix = preg_replace($path_patterns, $patterns_replacers, $prefix);
-        $val = self::$redisInstance->get($prefix . ':' . $cache_id);
+        $val = self::$memcachedInstance->get($prefix . ':' . $cache_id);
         if ($val == false) {
             return false;
         }
@@ -96,7 +97,7 @@ class CacheRedis implements ICache
         $content = time() . PHP_EOL;
         $content .= addcslashes(serialize($data), "\x00..\x1F\x7F\x22\x27\x5C");
         try {
-            return self::$redisInstance->set($prefix . ':' . $cache_id, $content, $ttl);
+            return self::$memcachedInstance->set($prefix . ':' . $cache_id, $content, $ttl);
         } catch (Exception $e) {
             return false;
         }
@@ -113,22 +114,10 @@ class CacheRedis implements ICache
         $patterns_replacers = ['', ':'];
         $cache_id = preg_replace($path_patterns, $patterns_replacers, $cache_id);
         $prefix = preg_replace($path_patterns, $patterns_replacers, $prefix);
-        self::$redisInstance->unlink($prefix . ':' . $cache_id);
+        self::$memcachedInstance->delete($prefix . ':' . $cache_id);
         return true;
     }
 
-    /**
-     * @param $prefix
-     * @return int
-     */
-    public function clean_path($prefix)
-    {
-        $res = self::$redisInstance->keys($prefix . '*');
-        if (count($res) > 0) {
-            self::$redisInstance->unlink($res);
-        }
-        return count($res);
-    }
 
 }
 

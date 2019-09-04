@@ -5,6 +5,7 @@ namespace WorkTestMax\Classes;
 use Exception;
 use WorkTestMax\Systems\CacheFile;
 use WorkTestMax\Systems\CacheRedis;
+use WorkTestMax\Systems\CacheMemcached;
 
 /**
  * Система кэширования.
@@ -51,9 +52,10 @@ class Cache
             switch ($engine_type) {
                 case 'redis':
                     self::$engine = new CacheRedis();
-                    if (CacheRedis::$enabled) {
-                        break;
-                    }
+                    break;
+                case 'memcached':
+                    self::$engine = new CacheMemcached();
+                    break;
                 case 'file':
                     self::$engine = new CacheFile();
                     break;
